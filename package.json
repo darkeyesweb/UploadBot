@@ -1,6 +1,6 @@
 {
   "name": "Discord-Bot",
-  "version": "1.4.0",
+  "version": "0.8.0",
   "description": "Notification bot for uploading media",
   "main": "bot.js",
   "author": "Ghost_",
@@ -9,10 +9,8 @@
     "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
     "discord.js": "^11.4.2",
     "fs": "0.0.1-security",
-    "ldapjs": "^1.0.2",
     "request": "^2.88.0",
     "stripchar": "^1.2.1",
-    "urlencode": "^1.1.0",
-    "winston": "^3.2.1"
+    "urlencode": "^1.1.0"
   }
 }
