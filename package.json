@@ -1,6 +1,6 @@
 {
   "name": "Discord-Bot",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Notification bot for uploading media",
   "main": "bot.js",
   "author": "Ghost_",
