@@ -1,6 +1,10 @@
 
 # Roadmap
+## -= 0.9.0 =-
 
+### AWS SDKs and JavaScript Node.JS vs PHP
+---
+  Move away from relying on AJAX calls to php and convert over to 100% 
 ## -= 1.0.0 =-
 
 ### Attachments: 
