@@ -4,7 +4,8 @@
 
 ### AWS SDKs and JavaScript Node.JS vs PHP
 ---
-  Move away from relying on AJAX calls to php and convert over to 100% 
+  Move away from relying on AJAX calls to php and convert over to 90% [JavaScript using the AWS SDK for JavaScript](https://aws.amazon.com/sdk-for-node-js/) as to clean up and make the process more linear
+  
 ## -= 1.0.0 =-
 
 ### Attachments: 
