@@ -2,13 +2,21 @@
 # Roadmap
 ## -= 0.9.0 =-
 
-### AWS SDKs and JavaScript Node.JS vs PHP
+##### AWS SDKs and JavaScript Node.JS vs PHP
 ---
-  Move away from relying on AJAX calls to php and convert over to 90% [JavaScript using the AWS SDK for JavaScript](https://aws.amazon.com/sdk-for-node-js/) as to clean up and make the process more linear
+
+  Turn away from using NodeJS and JavaScript functions when Promises are required to prevent Async timing problems. Using AJAX calls, a PHP function will do things like read, process, and compile in JSON a response making the script wait for the server. 
+  
+  ~~Move away from relying on AJAX calls to php and convert over to 90% [JavaScript using the AWS SDK for JavaScript](https://aws.amazon.com/sdk-for-node-js/) as to clean up and make the process more linear~~
+  
+  
+##### Automatic Error Reporting
+---
+  The bot will use the `botjs.startTyping();` function to show it is processing a command and using timer events create a timeout error that will tell the user what happened (or what didn't) and what they can do to fix it
   
 ## -= 1.0.0 =-
 
-### Attachments: 
+##### Attachments: 
 ---
   Any attachments sent natively (through discord) will be instantly cloned to the local server using the ```request()``` module from NPM
   ```javascript
@@ -41,6 +49,6 @@
     });
   ```
   
-  ##### Reasoning:
+  ###### Reasoning:
   
   When all files are uploaded scripts can be more thorough with search functions and statical analysis
