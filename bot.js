@@ -1,5 +1,6 @@
 var auth = process.env.UPLOADBOT_TOKEN;
 var commands = require("./commands.js");
+var events = require('events');
 
 const {Client,RichEmbed} = require('discord.js');
 const botjs = new Client();
