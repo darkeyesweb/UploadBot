@@ -3,6 +3,7 @@ var fs = require('fs');
 var request = require('request');
 var mysql = require('mysql');
 var url = require('url');
+var events = require('events');
 var strip = require("stripchar").StripChar;
 var {Client,RichEmbed} = require('discord.js');
 
