@@ -2,25 +2,23 @@ var fs = require('fs');
 var request = require('request');
 var {Client,RichEmbed} = require('discord.js');
 
-exports.getuser = function(g, m) {
+exports.getuser = function(g,m) {
 	
 	var args = m.content.split(" ", 3);
 	var user = m.author;
+	var guser = g.members.get(user.id);
 	var authorized = false;
 	var code = "";
 	var possibleusers = {};
 	var returndata = {};
 	
-	const authroles = {"545342506745725023": true};
+	const authrole = "545342506745725023";
 	const authusers = {"395612767136251904": true};
 	
-	/*g.roles.array().forEach((role) => {
-		if (authroles[role.id])
-			if (g.roles.get(role.id).members.get(user.id) !== undefined)
-				var authorized = true;
-	});*/
-	
 	authorized = authusers[user.id];
+	if (!authorized)
+		authorized = guser.roles.has(authrole);
+		
 	if (authorized === true) {
 		console.log("user is authorized");
 		fs.readFile("I:/xampp/AuthFiles/DiscordApp/users", "utf8", (err, data) => {
@@ -31,16 +29,22 @@ exports.getuser = function(g, m) {
 				if (user.split("::").length != 3)
 					return;
 					
-				var userdata = user.split("\n");
+				var userdata = user.split("::");
 				//console.log("Checking user "+userdata);
 				if (userdata[0].search(args[1]) == 0 || userdata[2] == args[1]) {
 					console.log("Matched user: "+userdata);
-					return `*Username:* ${userdata[0]}\n*Password:* ${userdata[1]}\n*UserID:* ${userdata[2]}`;
+					m.author.createDM().then((dmc) => {
+						m.channel.stopTyping(1);
+						dmc.send(`\`\`\`*Username:* ${userdata[0]}\n*Password:* ${userdata[1]}\n*UserID:* ${userdata[2]}\`\`\``);
+					});
 				}
 			});
 		});
 	} else {
-		return "Command unknown or you're not authorized to run it";
+		m.author.createDM().then((dmc) => {
+			m.channel.stopTyping(1);
+			dmc.send("Command unknown or you're not authorized to run it");
+		});
 	}
 }
 

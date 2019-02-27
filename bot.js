@@ -91,16 +91,16 @@ botjs.on('message', message => {
 		
 	console.log("Message Event");
 	var files = (message.attachments).array();
-	var g = botjs.guilds.get("525164132710744075");
+	var g = botjs.guilds.get("526111037573955584");
 	
   if (message.channel.type == "dm") {
 		  var args = message.content.split(" ");
-     	var g = botjs.guilds.get(args[1]);
-		 	if (args[0] == "/getuser") {
-      	console.log("User info command");
-				message.author.createDM().then((dmc) => {
-					dmc.send(commands.getuser(g, message));
-				});
+			if (args[0] == "/user") {
+				message.channel.startTyping();
+				commands.getuser(g, message);
+			} else if (args[0]) {
+				message.channel.startTyping();
+				commands.getpass(message);
 			}
 				 
     } else {
