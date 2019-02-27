@@ -1,9 +1,10 @@
 var http = require('http');
-var auth = require('./auth.json');
+var auth = process.env.UPLOADBOT_TOKEN;
 var url = require('url');
 var fs = require('fs');
 var strip = require("stripchar").StripChar;
 var request = require('request');
+var commands = require("./commands.js");
 
 const {
   Client,
@@ -14,7 +15,7 @@ const botjs = new Client();
 botjs.on('ready', () => {
   console.log("Ghost Bot: I'm online and ready!");
   const g = botjs.guilds.get("526111037573955584");
-
+	
   http.createServer((req, res) => {
     console.log("HTTP request received");
     var q = url.parse(req.url, true).query;
@@ -53,8 +54,22 @@ botjs.on('ready', () => {
   console.log("HTTP Server Listening On Port 8788");
 });
 
-function signup(u, p, uid) {
+function isAlphaNumeric(str) {
+  var code, i, len;
+  for (i = 0, len = str.length; i < len; i++) {
+    code = str.charCodeAt(i);
+    if (!(code > 47 && code < 58) && // numeric (0-9)
+				!(code > 64 && code < 91) && // upper alpha (A-Z)
+        !(code > 96 && code < 123)) { // lower alpha (a-z)
+      return false;
+    }
+  }
+  return true;
+};
 
+
+function signup(u, p, uid) {
+	
   var g = botjs.guilds.get("526111037573955584");
   console.log("Stripping username");
   var un = strip.RSExceptUnsAlpNum(u);
@@ -64,91 +79,30 @@ function signup(u, p, uid) {
       return "ERROR: " + err;
     }
 
+		DMC.send(`Congratulations on becoming a Pisscord Member!\nYou now have the ability to upload files! To do so head over to https://pisscord.org/ and signin using these credentials:\n\`\`\`Username: ${un}\nPassword: ${pass}\`\`\`\n\nHappy Posting ;)`);
     console.log('Ghost Bot: Created a new user! [' + un + ']');
   });
   return true;
 }
 
 botjs.on('message', message => {
-
-var g = botjs.guilds.get("526111037573955584");
-
   if (message.author.bot)
     return;
+		
 	console.log("Message Event");
 	var files = (message.attachments).array();
+	var g = botjs.guilds.get("525164132710744075");
 	
   if (message.channel.type == "dm") {
-    var args = message.content.split(" ");
-     console.log("Command Received ", args);
-      if (args[0] == "!getpass") {
-        console.log(message.author.username.toLowerCase() + ": password command");
-        fs.readFile("I:/xampp/AuthFiles/DiscordApp/users", "utf8", (err, data) => {
-          data.split("\n").forEach((val, i) => {
-          var un = val.split("::")[0];
-          var p = val.split("::")[1];
-            if (val.split("::")[2] == message.author.id) {
-              message.author.createDM().then((DMC) => {
-                DMC.send("Your Pisscord.org account credentials:\nUsername: "+un+"\nPassword: "+p);
-              });
-            } else if (i == data.split("\n").length) {
-              message.author.createDM().then((DMC) => {
-                DMC.send("You do not have an account made currently. Please message @Ghost to register an account");
-              });
-            }
-          });
-        });
-
-      } else if (args[0] == "!registerMembers") {
-       //console.log("Register members command ", message.author.id);
-        if (false === true) {
-         console.log("registering members");
-          var members = g.roles.find(role => role.name === "Pisscord Member").members;
-          members.forEach((user) => {
-            fs.readFile("wordlist", 'utf8', (err, data) => { 
-              var min = 0;
-              var max = data.split(",").length;
-              var i1 = Math.floor(Math.random() * (+max - +min)) + min;
-              var i2 = Math.floor(Math.random() * (+max - +min)) + min;
-
-              var words = data.split(",");
-              var word1 = words[i1].trim();
-              var word2 = words[i2].trim();
-		console.log("registering "+user.user.username);
-              signup(user.user.username, word1 + word2, user.id);
-            });
-          });
-        }
-      } else if (args[0] == "!getuser") {
-      console.log("User info command", message.author);
-        if (message.author.id == "395612767136251904") {
-        console.log("User lookup validated");
-          fs.readFile("I:/xampp/AuthFiles/DiscordApp/users", "utf8", (err, data) => {
-            var users = data.split("\n");
-            users.forEach((u) => {
-              var userdetails = u.split("::");
-              if (args[1] == userdetails[0].toLowerCase()) {
-                message.author.createDM().then((DMC) => {
-                  DMC.send("Username: " + userdetails[0] + "\nPassword: " + userdetails[1] + "\nID: " + userdetails[2]);
-                  return;
-                });
-              }
-            });
-          });
-        }
-      } else if (args[0] == "!attachments") {
-				g.channels.find(channel => channel.name === args[1]).fetchMessages().then((messages) => {
-					messages.forEach((msg) => {
-						var att = (msg.attachments).array();
-						if (att.length) {
-							att.forEach((a) => {
-								console.log("Attachment: "+a.filename);
-								request(a.url).pipe(fs.createWriteStream("M:/Pisscord/attachments/"+a.filename));
-							});
-						}
-					});
-				}).catch(console.error);
+		  var args = message.content.split(" ");
+     	var g = botjs.guilds.get(args[1]);
+		 	if (args[0] == "/getuser") {
+      	console.log("User info command");
+				message.author.createDM().then((dmc) => {
+					dmc.send(commands.getuser(g, message));
+				});
 			}
+				 
     } else {
 			if (files.length) {
 				files.forEach((a) => {
@@ -182,10 +136,11 @@ botjs.on('guildMemberUpdate', function (old, newuser) {
   } else {
     if (newroles["526113421943504927"] === true) {
       fs.readFile("I:/xampp/AuthFiles/DiscordApp/users", "utf8", (err, data) => {
-        console.log("User file read");
-        if (err) {
-          console.log(err);
-        }
+        if (err)
+          return console.log(err);
+        else
+					console.log("User file read");
+					
         data.split("\n").forEach((val, i) => {
           if (val.split("::")[0] == newuser.user.username) {
             console.log("Ghost Bot: User already has active account");
@@ -203,10 +158,8 @@ botjs.on('guildMemberUpdate', function (old, newuser) {
             var word1 = words[i1].trim();
             var word2 = words[i2].trim();
 
-            DMC.send("Congratulations on becoming a Pisscord Member!\nYou now have the ability to upload files! To do so head over to https://pisscord.org/ and signin using these credentials:\nUsername: " + newuser.user.username + "\nPassword: " + word1 + word2 + "\n\nHappy Posting ;)");
-
             console.log("Calling sign-up function");
-            signup(newuser.user.username, word1 + word2, newuser.user.id);
+            signup(newuser.user.username, word1 + word2, newuser.user.id, true);
           });
         });
       });
@@ -214,4 +167,4 @@ botjs.on('guildMemberUpdate', function (old, newuser) {
   }
 });
 
-botjs.login(auth.token);
+botjs.login(auth);
